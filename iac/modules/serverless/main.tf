@@ -1,6 +1,6 @@
 data "archive_file" "archivo_crear_cita_lambda" {
   type        = "zip"
-  source_dir  = "${path.root}/../serverless/tiendavirtual/packages/funciones/crear-cita/build"
+  source_dir  = "${path.root}/../serverless/veterinariavirtual/packages/funciones/crear-cita/build"
   output_path = "${path.root}/data/crear_cita_lambda.zip"
 }
 
