@@ -1,5 +1,6 @@
 package pe.com.veterinaria.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.com.veterinaria.modelo.CitaMedica;
@@ -24,15 +25,16 @@ public class CitaMedicaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CitaMedica> obtenerPorId(@PathVariable Long id) {
-        Optional<CitaMedica> tutor = citaMedicaService.obtenerPorId(id);
-        return tutor.map(ResponseEntity::ok)
+        Optional<CitaMedica> citamedica = citaMedicaService.obtenerPorId(id);
+        return citamedica.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<CitaMedica> crear(@RequestBody CitaMedica tutor) {
-        CitaMedica nuevoTutor = citaMedicaService.guardar(tutor);
-        return ResponseEntity.ok(nuevoTutor);
+    public ResponseEntity<CitaMedica> crear(@RequestBody CitaMedica citamedica) {
+        System.out.println(citamedica);
+        CitaMedica nuevaCitaMedica = citaMedicaService.guardar(citamedica);
+        return ResponseEntity.ok(nuevaCitaMedica);
     }
 
     @PutMapping("/{id}")

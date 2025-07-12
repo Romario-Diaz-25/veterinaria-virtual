@@ -16,15 +16,15 @@ public class CitaMedica {
     private String motivo;
 
     @Column(name = "fecha")
-    private Date fecha;
+    private String fecha;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idTutor")
+    @JoinColumn(name = "idMedico")
     @JsonBackReference
-    private Tutor tutor;
+    private Medico medico;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idPaciente")
     @JsonBackReference
-    private Tutor Paciente;
+    private Paciente paciente;
 }

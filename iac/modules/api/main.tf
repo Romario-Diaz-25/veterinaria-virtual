@@ -1,5 +1,5 @@
 resource "aws_apigatewayv2_api" "http_api" {
-  name          = "tienda-virtual-api"
+  name          = "veterinaria-virtual-api"
   protocol_type = "HTTP"
 
   cors_configuration {
@@ -9,66 +9,67 @@ resource "aws_apigatewayv2_api" "http_api" {
   }
 }
 
-resource "aws_apigatewayv2_integration" "productos_integration_get_all" {
+resource "aws_apigatewayv2_integration" "medico_integration_get_all" {
   api_id                 = aws_apigatewayv2_api.http_api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "http://${var.load_balancer_url}/api/productos"
+  integration_uri        = "http://${var.load_balancer_url}/api/medico"
   integration_method     = "ANY"
   payload_format_version = "1.0"
 }
 
-resource "aws_apigatewayv2_integration" "productos_integration" {
+resource "aws_apigatewayv2_integration" "medico_integration" {
   api_id                 = aws_apigatewayv2_api.http_api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "http://${var.load_balancer_url}/api/productos/{proxy}"
+  integration_uri        = "http://${var.load_balancer_url}/api/medico/{proxy}"
   integration_method     = "ANY"
   payload_format_version = "1.0"
 }
 
-resource "aws_apigatewayv2_integration" "clientes_integration_get_all" {
+resource "aws_apigatewayv2_integration" "tutor_integration_get_all" {
   api_id                 = aws_apigatewayv2_api.http_api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "http://${var.load_balancer_url}/api/clientes"
+  integration_uri        = "http://${var.load_balancer_url}/api/tutor"
   integration_method     = "ANY"
   payload_format_version = "1.0"
 }
 
-resource "aws_apigatewayv2_integration" "clientes_integration" {
+resource "aws_apigatewayv2_integration" "tutor_integration" {
   api_id                 = aws_apigatewayv2_api.http_api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "http://${var.load_balancer_url}/api/clientes/{proxy}"
+  integration_uri        = "http://${var.load_balancer_url}/api/tutor/{proxy}"
   integration_method     = "ANY"
   payload_format_version = "1.0"
 }
 
-resource "aws_apigatewayv2_integration" "carritos_integration_get_all" {
+resource "aws_apigatewayv2_integration" "paciente_integration_get_all" {
   api_id                 = aws_apigatewayv2_api.http_api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "http://${var.load_balancer_url}/api/carritos"
+  integration_uri        = "http://${var.load_balancer_url}/api/paciente"
   integration_method     = "ANY"
   payload_format_version = "1.0"
 }
 
-resource "aws_apigatewayv2_integration" "carritos_integration" {
+resource "aws_apigatewayv2_integration" "paciente_integration" {
   api_id                 = aws_apigatewayv2_api.http_api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "http://${var.load_balancer_url}/api/carritos/{proxy}"
+  integration_uri        = "http://${var.load_balancer_url}/api/paciente/{proxy}"
   integration_method     = "ANY"
   payload_format_version = "1.0"
 }
 
-resource "aws_apigatewayv2_integration" "ordenes_integration_get_all" {
+
+resource "aws_apigatewayv2_integration" "citamedica_integration_get_all" {
   api_id                 = aws_apigatewayv2_api.http_api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "http://${var.load_balancer_url}/api/ordenes"
+  integration_uri        = "http://${var.load_balancer_url}/api/citamedica"
   integration_method     = "ANY"
   payload_format_version = "1.0"
 }
 
-resource "aws_apigatewayv2_integration" "ordenes_integration" {
+resource "aws_apigatewayv2_integration" "citamedica_integration" {
   api_id                 = aws_apigatewayv2_api.http_api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "http://${var.load_balancer_url}/api/ordenes/{proxy}"
+  integration_uri        = "http://${var.load_balancer_url}/api/citamedica/{proxy}"
   integration_method     = "ANY"
   payload_format_version = "1.0"
 }
@@ -80,8 +81,8 @@ resource "aws_apigatewayv2_integration" "eventbridge_integration" {
   credentials_arn        = var.rol_lab_arn
 
   request_parameters = {
-    Source       = "pe.com.tiendavirtual"
-    DetailType   = "crear-orden"
+    Source       = "pe.com.veterinariavirtual"
+    DetailType   = "crear-cita"
     Detail       = "$request.body"
     EventBusName = var.event_bus_name
   }
@@ -107,137 +108,137 @@ resource "aws_apigatewayv2_stage" "default_stage" {
 }
 
 #########################################
-# Routes - Ordenes (EventBridge for POST, PUT)
+# Routes - citamedica (EventBridge for POST, PUT)
 #########################################
-resource "aws_apigatewayv2_route" "ordenes_post" {
+resource "aws_apigatewayv2_route" "citamedica_post" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "POST /ordenes"
+  route_key = "POST /citamedica"
   target    = "integrations/${aws_apigatewayv2_integration.eventbridge_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "ordenes_put" {
+resource "aws_apigatewayv2_route" "citamedica_put" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "PUT /ordenes/{proxy+}"
+  route_key = "PUT /citamedica/{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.eventbridge_integration.id}"
 }
 
 #########################################
-# Routes - Clientes
+# Routes - tutor
 #########################################
-resource "aws_apigatewayv2_route" "clientes_get_all" {
+resource "aws_apigatewayv2_route" "tutor_get_all" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /clientes"
-  target    = "integrations/${aws_apigatewayv2_integration.clientes_integration_get_all.id}"
+  route_key = "GET /tutor"
+  target    = "integrations/${aws_apigatewayv2_integration.tutor_integration_get_all.id}"
 }
 
-resource "aws_apigatewayv2_route" "clientes_get_proxy" {
+resource "aws_apigatewayv2_route" "tutor_get_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /clientes/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.clientes_integration.id}"
+  route_key = "GET /tutor/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.tutor_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "clientes_post" {
+resource "aws_apigatewayv2_route" "tutor_post" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "POST /clientes"
-  target    = "integrations/${aws_apigatewayv2_integration.clientes_integration_get_all.id}"
+  route_key = "POST /tutor"
+  target    = "integrations/${aws_apigatewayv2_integration.tutor_integration_get_all.id}"
 }
 
-resource "aws_apigatewayv2_route" "clientes_put_proxy" {
+resource "aws_apigatewayv2_route" "tutor_put_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "PUT /clientes/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.clientes_integration.id}"
+  route_key = "PUT /tutor/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.tutor_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "clientes_delete_proxy" {
+resource "aws_apigatewayv2_route" "tutor_delete_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "DELETE /clientes/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.clientes_integration.id}"
+  route_key = "DELETE /tutor/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.tutor_integration.id}"
 }
 
 #########################################
-# Routes - Productos
+# Routes - medico
 #########################################
 
 resource "aws_apigatewayv2_route" "producto_get_all" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /productos"
-  target    = "integrations/${aws_apigatewayv2_integration.productos_integration_get_all.id}"
+  route_key = "GET /medico"
+  target    = "integrations/${aws_apigatewayv2_integration.medico_integration_get_all.id}"
 }
 
 resource "aws_apigatewayv2_route" "producto_get_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /productos/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.productos_integration.id}"
+  route_key = "GET /medico/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.medico_integration.id}"
 }
 
 resource "aws_apigatewayv2_route" "producto_post" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "POST /productos"
-  target    = "integrations/${aws_apigatewayv2_integration.productos_integration_get_all.id}"
+  route_key = "POST /medico"
+  target    = "integrations/${aws_apigatewayv2_integration.medico_integration_get_all.id}"
 }
 
 resource "aws_apigatewayv2_route" "producto_put_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "PUT /productos/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.productos_integration.id}"
+  route_key = "PUT /medico/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.medico_integration.id}"
 }
 
 resource "aws_apigatewayv2_route" "producto_delete_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "DELETE /productos/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.productos_integration.id}"
+  route_key = "DELETE /medico/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.medico_integration.id}"
 }
 
 #########################################
-# Routes - Carritos
+# Routes - paciente
 #########################################
-resource "aws_apigatewayv2_route" "carritos_get_all" {
+resource "aws_apigatewayv2_route" "paciente_get_all" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /carritos"
-  target    = "integrations/${aws_apigatewayv2_integration.carritos_integration_get_all.id}"
+  route_key = "GET /paciente"
+  target    = "integrations/${aws_apigatewayv2_integration.paciente_integration_get_all.id}"
 }
 
-resource "aws_apigatewayv2_route" "carritos_get_proxy" {
+resource "aws_apigatewayv2_route" "paciente_get_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /carritos/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.carritos_integration.id}"
+  route_key = "GET /paciente/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.paciente_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "carritos_post" {
+resource "aws_apigatewayv2_route" "paciente_post" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "POST /carritos/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.carritos_integration.id}"
+  route_key = "POST /paciente/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.paciente_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "carritos_put_proxy" {
+resource "aws_apigatewayv2_route" "paciente_put_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "PUT /carritos/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.carritos_integration.id}"
+  route_key = "PUT /paciente/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.paciente_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "carritos_delete_proxy" {
+resource "aws_apigatewayv2_route" "paciente_delete_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "DELETE /carritos/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.carritos_integration.id}"
+  route_key = "DELETE /paciente/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.paciente_integration.id}"
 }
 
 #########################################
-# Routes - Ordenes
+# Routes - citamedica
 #########################################
-resource "aws_apigatewayv2_route" "ordenes_get_all" {
+resource "aws_apigatewayv2_route" "citamedica_get_all" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /ordenes"
-  target    = "integrations/${aws_apigatewayv2_integration.ordenes_integration_get_all.id}"
+  route_key = "GET /citamedica"
+  target    = "integrations/${aws_apigatewayv2_integration.citamedica_integration_get_all.id}"
 }
 
-resource "aws_apigatewayv2_route" "ordenes_get_proxy" {
+resource "aws_apigatewayv2_route" "citamedica_get_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /ordenes/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.ordenes_integration.id}"
+  route_key = "GET /citamedica/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.citamedica_integration.id}"
 }
 
-resource "aws_apigatewayv2_route" "ordenes_delete_proxy" {
+resource "aws_apigatewayv2_route" "citamedica_delete_proxy" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "DELETE /ordenes/{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.ordenes_integration.id}"
+  route_key = "DELETE /citamedica/{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.citamedica_integration.id}"
 }
