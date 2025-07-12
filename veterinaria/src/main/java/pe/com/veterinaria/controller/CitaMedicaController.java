@@ -1,6 +1,5 @@
 package pe.com.veterinaria.controller;
 
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.com.veterinaria.modelo.CitaMedica;
